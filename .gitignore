@@ -1,0 +1,15 @@
+.DS_Store
+Thumbs.db
+*.tmp
+
+# Personal content: keep the pipeline folders' structure, ignore what's in them
+0-experience/*
+1-job-descriptions/*
+2-initial-drafts/*
+3-compact-drafts/*
+4-final-drafts/*
+!0-experience/.gitkeep
+!1-job-descriptions/.gitkeep
+!2-initial-drafts/.gitkeep
+!3-compact-drafts/.gitkeep
+!4-final-drafts/.gitkeep
