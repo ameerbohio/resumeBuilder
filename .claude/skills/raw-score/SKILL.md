@@ -15,7 +15,7 @@ trusting the number currently on record.
 
 ## Invocation
 
-`/raw-score <slug>` — `<slug>` matches `1-job-descriptions/<slug>.md`.
+`/raw-score <slug>` — `<slug>` matches `1-job-descriptions/<slug>/job-description.md`.
 
 If more than one draft stage exists for that slug
 (`2-initial-drafts/`, `3-compact-drafts/`, `4-final-drafts/`), ask
@@ -23,9 +23,10 @@ which one to score. If only one exists, use it without asking.
 
 ## Procedure
 
-1. **Read the job description fresh.** `1-job-descriptions/<slug>.md`,
-   the posting text only, not its own `## Fit Rating` section. That
-   section is a prior score; don't anchor on it.
+1. **Read the job description fresh.**
+   `1-job-descriptions/<slug>/job-description.md`, the posting text
+   only, not its own `## Fit Rating` section. That section is a prior
+   score; don't anchor on it.
 2. **Read the target draft fresh.** Only the resume text itself. For a
    `3-compact-drafts/<slug>.md` file, that means the content *below*
    the Compaction Log. Do not treat the log's prior score claims or
@@ -60,20 +61,25 @@ which one to score. If only one exists, use it without asking.
    the product the team owns, anything that surfaces an adjacent skill
    or interest that would land well with that specific team but that
    the JD itself never asked for. Report these separately as
-   **Bonus signals (not scored)**. Do not fold them into any of the
-   four numeric components — the rubric only scores against what the
-   JD itself states; mixing in externally researched criteria would
-   break `CLAUDE.md` rule 5 ("scores are always computed the same
-   way") by scoring different applications against different,
+   **Bonus signals (not scored)**, and save any findings worth keeping
+   to `1-job-descriptions/<slug>/research.md` (create it if absent,
+   append if present) — this is job/company-specific, so per
+   `CLAUDE.md`'s repo layout it belongs alongside the job description,
+   never in `research-notes/`. Do not fold bonus signals into any of
+   the four numeric components — the rubric only scores against what
+   the JD itself states; mixing in externally researched criteria
+   would break `CLAUDE.md` rule 5 ("scores are always computed the
+   same way") by scoring different applications against different,
    undocumented criteria sets.
-6. **Report, don't write.** This skill produces a report in the
-   conversation. It does not edit the draft file, the job-description
-   file, or the Compaction Log. If the score differs from what's
-   currently on record, surface the discrepancy and the specific
-   evidence gap that caused it. Logging a correction or restoring
-   evidence is a separate decision for the user, same as any other
-   file edit in this pipeline (hard rule 3: no auto-advancing without
-   explicit go-ahead).
+6. **Report, don't write to the draft.** This skill never edits the
+   draft file, the job-description file's `## Fit Rating`, or the
+   Compaction Log — those stay a separate decision for the user, same
+   as any other file edit in this pipeline (hard rule 3: no
+   auto-advancing without explicit go-ahead). The one exception is
+   `1-job-descriptions/<slug>/research.md` per step 5: that file exists
+   specifically to persist reusable research rather than lose it at
+   the end of the conversation, so saving to it is not "advancing a
+   stage."
 
 ## Output format
 

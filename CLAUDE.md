@@ -13,8 +13,16 @@ Folders are numbered in pipeline order:
 0-experience/
   experience.md              Master experience dump. Single source of truth.
 1-job-descriptions/
-  <slug>.md                  The job posting, pasted verbatim, plus a
+  <slug>/
+    job-description.md       The job posting, pasted verbatim, plus a
                               "## Fit Rating" section appended by Stage 1.
+    research.md               Job/company-specific research (hiring-team
+                              signals, product/team context, handbook
+                              pages, etc.) — optional, created whenever
+                              Stage 1 or a scoring pass turns up something
+                              worth keeping. Company-specific research
+                              never goes in research-notes/ — see that
+                              folder's entry below.
 2-initial-drafts/
   <slug>.md                  Stage 2 output: all relevant experience, uncompacted,
                               with a fit score noted at the top and a
@@ -32,19 +40,24 @@ Folders are numbered in pipeline order:
                               what gets submitted. Empty until a job reaches this
                               point.
 research-notes/
-  README.md                  Index. Best-practice research (skills-section
-                              structure, bullet-point readability, work-
-                              experience density, etc.) gathered while working
+  README.md                  Index. Generic, cross-application best-practice
+                              research only (skills-section structure,
+                              bullet-point readability, work-experience
+                              density, etc.) — nothing tied to a specific
+                              company, team, or role. Gathered while working
                               applications through the pipeline, kept so it
                               doesn't need re-searching on the next one. Not a
                               pipeline stage — no hard rule reads from it.
+                              Company/job-specific research belongs in
+                              `1-job-descriptions/<slug>/research.md`
+                              instead, never here.
 ```
 
-The same `<slug>` is reused across `1-job-descriptions/` through
-`4-final-drafts/` so files for one application line up by name. Naming
-convention: `company_role-slug` (e.g. `acme_senior-backend-engineer`) — no
-date prefix needed since the numbered folders already separate things by
-stage.
+The same `<slug>` names the folder under `1-job-descriptions/` and the files
+across `2-initial-drafts/` through `4-final-drafts/`, so everything for one
+application lines up by name. Naming convention: `company_role-slug` (e.g.
+`acme_senior-backend-engineer`) — no date prefix needed since the numbered
+folders already separate things by stage.
 
 ## Hard rules (apply at every stage)
 
@@ -163,14 +176,14 @@ analysis layered on top of it.
 Trigger: user provides or points to a job description for a new application.
 
 1. Pick a `<slug>` (`company_role-slug`) and save the JD verbatim to
-   `1-job-descriptions/<slug>.md`.
+   `1-job-descriptions/<slug>/job-description.md`.
 2. Read `0-experience/experience.md` in full.
 3. Score the fit per the rubric above, using the full experience file as the
    candidate material (not yet tailored to anything).
 4. Append a `## Fit Rating` section to the bottom of
-   `1-job-descriptions/<slug>.md`: total score, component breakdown, explicit
-   list of gaps/unmet requirements, and a one-line recommendation
-   (pursue / stretch / skip).
+   `1-job-descriptions/<slug>/job-description.md`: total score, component
+   breakdown, explicit list of gaps/unmet requirements, and a one-line
+   recommendation (pursue / stretch / skip).
 5. **Stop.** Report the score and top gaps to the user. Wait for them to say
    whether to proceed to Stage 2.
 
@@ -212,8 +225,8 @@ section at the top, and the current-best draft below it.
    copied in as the starting point) and produce a tighter version: cut
    redundancy, merge overlapping bullets, sharpen wording, drop material
    that's genuinely low-relevance to this JD.
-2. Re-score the tightened version against `1-job-descriptions/<slug>.md`
-   using the same rubric.
+2. Re-score the tightened version against
+   `1-job-descriptions/<slug>/job-description.md` using the same rubric.
 3. Compare to the baseline ceiling from `2-initial-drafts/<slug>.md` (and the
    previous iteration's score):
    - If the score **dropped**, identify exactly which component/bullet

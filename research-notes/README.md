@@ -1,9 +1,15 @@
 # Research Notes
 
 Reference material only — not a pipeline stage, not read by any stage's
-hard rules. This folder holds best-practice research gathered while
-working applications through the pipeline, so it doesn't need to be
-re-searched from scratch on the next one.
+hard rules. This folder holds **generic, cross-application** best-practice
+research gathered while working applications through the pipeline, so it
+doesn't need to be re-searched from scratch on the next one.
+
+Nothing company- or job-specific belongs here — no employer names, no
+team/product research, no draft-specific audits tied to one application.
+That kind of research goes in `1-job-descriptions/<slug>/research.md`
+instead, alongside the job it's about, so this folder never reveals what
+you're applying to.
 
 Each file: what was searched, the key findings, sources, and (where
 applicable) how it was applied in a specific draft at the time.
@@ -17,3 +23,4 @@ permanent ruling.
 - [technical-skills-section.md](technical-skills-section.md) — how many categories/items, whether to repeat skills already shown in bullets
 - [project-bullet-readability.md](project-bullet-readability.md) — technical depth vs. scannability, XYZ/Action+Tech+Impact structure
 - [work-experience-density.md](work-experience-density.md) — bullets-per-job guidance, avoiding redundant skill demonstration across bullets
+- [metric-quantification-density.md](metric-quantification-density.md) — how many bullets per role should carry a hard number, metric categories to mine
