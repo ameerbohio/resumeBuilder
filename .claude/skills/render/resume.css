@@ -1,0 +1,92 @@
+/* Print layout calibrated against 4-final-drafts/Ameer_Bohio_Resume_Gitlab.pdf
+   (the reference one-page render produced in Google Docs). Do not restyle
+   casually: page-fit-check's page count is only meaningful while this
+   stylesheet matches the reference. */
+
+@page {
+  size: Letter;
+  margin: 0.5in 0.6in;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  font-family: "Times New Roman", Times, Liberation Serif, serif;
+  font-size: 10.5pt;
+  line-height: 1.18;
+  color: #000;
+  margin: 0;
+}
+
+/* ---- header block ---- */
+.name {
+  font-size: 19pt;
+  font-weight: bold;
+  text-align: center;
+  margin: 0 0 1pt;
+  letter-spacing: 0.2pt;
+}
+.tagline {
+  font-size: 11.5pt;
+  font-style: italic;
+  text-align: center;
+  margin: 0 0 1pt;
+}
+.contact {
+  font-size: 10pt;
+  text-align: center;
+  margin: 0 0 7pt;
+}
+.contact a { color: #1155cc; text-decoration: underline; }
+
+/* ---- section headers ---- */
+h2 {
+  font-size: 11pt;
+  font-weight: bold;
+  text-transform: uppercase;
+  border-bottom: 1.2pt solid #2a4b8d;
+  padding-bottom: 1.5pt;
+  margin: 7pt 0 4pt;
+  letter-spacing: 0.3pt;
+}
+
+/* ---- role / project / degree header lines ---- */
+.entry {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin: 4pt 0 1pt;
+  gap: 12pt;
+}
+.entry .left { flex: 1; }
+.entry .date { font-style: italic; white-space: nowrap; }
+.entry b { font-weight: bold; }
+.entry i { font-style: italic; }
+
+/* Education rows sit tighter than job entries */
+.edu .entry { margin: 1.5pt 0; }
+
+/* ---- bullets ---- */
+ul {
+  margin: 0;
+  padding-left: 13pt;
+  list-style: none;
+}
+li {
+  position: relative;
+  margin: 0 0 1.2pt;
+  padding-left: 8pt;
+  text-align: left;
+}
+li::before {
+  content: "•";
+  position: absolute;
+  left: -2pt;
+  top: 0;
+}
+
+/* ---- skills ---- */
+.skills p { margin: 0 0 1.2pt; }
+.skills b { font-weight: bold; }
+
+a { color: #1155cc; }

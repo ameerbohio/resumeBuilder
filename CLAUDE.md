@@ -210,7 +210,31 @@ Trigger: user approves the fit rating and says to proceed.
 5. **Stop.** Report the score and ask the user to review for completeness/
    accuracy — did anything relevant get missed, is anything misrepresented.
    Iterate on this draft directly with the user until they say it's good.
-   Do not move to Stage 3 until they explicitly confirm.
+   Do not move to Stage 2.5 until they explicitly confirm.
+
+## Stage 2.5 — Accuracy and metrics (before any compaction)
+
+Trigger: user confirms the Stage 2 draft is complete.
+
+Both steps edit `0-experience/experience.md` at the source (user-initiated
+and explicit, so hard rule 2 is satisfied) and propagate downstream. They
+run **here**, not later, because compaction rewords bullets — and rewording
+a bullet that is about to be corrected or gain a metric is wasted work.
+This ordering is the main lever for reducing total iteration count.
+
+1. **Accuracy checkpoint.** Walk the user through every claim whose
+   plain reading could overstate what happened: verb strength ("led",
+   "owned", "drove"), attribution across projects/employers, skills-line
+   entries with no supporting bullet, claims where the technical truth
+   differs from the plain reading, and whether existing numbers are
+   measured or estimated. Ask once, as one grouped list.
+2. **Metrics interview.** Audit which bullets carry no hard number,
+   then interview the user for the real ones. "I don't remember" is a
+   valid answer — hard rule 1 means no invented figure fills the gap.
+3. Apply approved changes to `experience.md` first, then every draft
+   stage.
+4. **Stop.** Report what changed and re-score if any correction touched
+   scored evidence. Wait for the go-ahead to compact.
 
 ## Stage 3 — Compaction (iterate to final)
 
@@ -249,14 +273,54 @@ section at the top, and the current-best draft below it.
      - `Risk check:` one line. "No new risk" is a valid, expected answer
        most passes — only expand past one line if this pass actually
        introduced or changed a Stage 2 "Why This Could Be Rejected" risk.
-4. Repeat until a further compaction pass cannot reduce length/redundancy
-   further without dropping the score. At that point the current-best
-   version is done.
+4. Repeat until the six-gate stop test passes (score floor, page fit,
+   accuracy clean, readability clean, diminishing returns confirmed,
+   ordering current — see the `pass-criteria` skill). A plateaued score
+   is **not** by itself a reason to stop: it measures rubric coverage,
+   not whether a skimming human can read the page.
+
+   **Compaction targets page fit, not minimum length.** Cut while the
+   draft overflows; once it fits, stop. If cutting overshoots and leaves
+   whitespace, add material back from `experience.md` until the page is
+   exactly full — those non-decreasing passes are logged like any other.
+   A draft that fills the page with content the user wants is done, and
+   needs no further compaction pass to prove it.
 5. Copy the winning draft — clean, with no log/comments — to
-   `4-final-drafts/<slug>.md`. This file should be submission-ready as-is.
+   `4-final-drafts/<slug>.md`, and render the submission PDF. This file
+   should be submission-ready as-is.
 6. Report the final score next to the baseline ceiling (should be equal) and
    how many compaction passes it took. `4-final-drafts/<slug>.md` is the
-   finished, submittable resume — no further automatic changes.
+   finished, submittable resume — no further automatic changes. If it is
+   ever edited later, re-render the PDF in the same turn; a stale PDF
+   beside corrected markdown is invisible and is this stage's worst
+   failure mode.
+
+## Skills
+
+The pipeline is implemented as atomic skills in `.claude/skills/`,
+orchestrated by `run-pipeline`. Prefer invoking the relevant skill over
+improvising the stage by hand — each one encodes a mistake this pipeline
+has already made once.
+
+| Skill | Stage | Role |
+|---|---|---|
+| `run-pipeline` | all | Orchestrator; enforces ordering and stage gates |
+| `fit-rating` | 1 | Score JD vs. `experience.md`, append Fit Rating |
+| `job-research` | 1 | Team/company signals -> `<slug>/research.md` |
+| `draft-initial` | 2 | Comprehensive draft + baseline ceiling + risk read |
+| `accuracy-checkpoint` | 2.5 | Confirm every claim is literally true |
+| `metrics-interview` | 2.5 | Source real numbers for unquantified bullets |
+| `compactor` | 3 | One tighten/cut/merge pass, re-score, log |
+| `raw-score` | 3 | Blind re-score; catches drift |
+| `skim-readability` | 3 | Per-bullet scannability checks |
+| `reorder` | 3 | Rank bullets by JD relevance/impact/scope |
+| `page-fit-check` | 3 | Real rendered page count via headless Chrome |
+| `pass-criteria` | 3 | The six-gate stop test |
+| `propagate-edit` | any | One change across `experience.md` -> all stages |
+| `finalize` | 3 | Clean copy to `4-final-drafts/` + PDF |
+
+PDF rendering: `.claude/skills/render/render_resume.py` (+ `resume.css`,
+calibrated against `4-final-drafts/Ameer_Bohio_Resume_Gitlab.pdf`).
 
 ## Tone/format for resume content
 
