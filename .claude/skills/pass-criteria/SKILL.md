@@ -1,6 +1,6 @@
 ---
 name: pass-criteria
-description: Decide whether a resume draft is done - a six-gate check across score, page fit, accuracy, readability, diminishing returns, and ordering - or name exactly which pass should run next. Use to test whether compaction should stop, or when asked if the resume is as good as it gets.
+description: Decide whether a resume draft is done - a seven-gate check across score, page fit, accuracy, readability, diminishing returns, ordering, and bold-emphasis density - or name exactly which pass should run next. Use to test whether compaction should stop, or when asked if the resume is as good as it gets.
 ---
 
 # Pass criteria
@@ -8,6 +8,10 @@ description: Decide whether a resume draft is done - a six-gate check across sco
 The stop test for the Stage 3 loop. Either "done, finalize it" or "not
 done, and here is the single next pass" — never a vague "could keep
 tightening".
+
+Seven gates as of the `bold` skill's addition to the pipeline — update
+this count if a future skill adds another gate, so the header line and
+the actual gate list never drift apart.
 
 ## Why it is not just the score
 
@@ -69,6 +73,15 @@ to tick the box.
 bullet set. If any bullet was added, removed, or reworded since the last
 reorder, this gate fails — ordering goes stale silently.
 
+**7. Bold density current.** `bold` has run against the **present**
+bullet set and reported density under the ~15% ceiling from
+`research-notes/resume-bold-emphasis.md`. If any bullet was added,
+removed, or reworded since the last bold pass — or `bold` has never run
+— this gate fails. Emphasis goes stale exactly like ordering does: a
+bullet added after the last bold pass is unbolded by omission, not by
+a deliberate "this bullet doesn't earn it" call, and a reader has no way
+to tell the difference.
+
 ## Output
 
 ```
@@ -82,6 +95,7 @@ reorder, this gate fails — ordering goes stale silently.
 | 4 Readability clean  | PASS/FAIL | N of M bullets failing |
 | 5 Diminishing returns| PASS/FAIL | last compactor attempt: <result> |
 | 6 Ordering current   | PASS/FAIL | last reorder: <when> vs last content change |
+| 7 Bold density       | PASS/FAIL | last bold: <when> vs last content change, density N% |
 
 **Next pass:** <the single specific skill and target, or "none — finalize">
 ```

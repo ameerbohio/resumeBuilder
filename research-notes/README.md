@@ -25,3 +25,4 @@ permanent ruling.
 - [work-experience-density.md](work-experience-density.md) — bullets-per-job guidance, avoiding redundant skill demonstration across bullets
 - [metric-quantification-density.md](metric-quantification-density.md) — how many bullets per role should carry a hard number, metric categories to mine
 - [bullet-order-priority.md](bullet-order-priority.md) — how to rank/order bullets within a section by JD relevance, quantified impact, and scope appropriateness
+- [resume-bold-emphasis.md](resume-bold-emphasis.md) — what to bold (metrics first, then JD keywords), density ceiling (~10-15%), why ATS parsing is irrelevant to the decision

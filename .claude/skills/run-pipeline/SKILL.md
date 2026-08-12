@@ -33,7 +33,9 @@ Stage 3   page-fit-check       (first: does it even overflow?)
           }
           add material back    (if cutting overshot, fill the page exactly)
           reorder              (once the bullet set is stable)
-          pass-criteria        (final confirmation)
+          bold                 (once wording/order are settled — last content pass)
+          page-fit-check       (bold markup adds chars — re-verify before trusting fit)
+          pass-criteria        (final confirmation, all seven gates)
 Stage 3.5 finalize            -> 4-final-drafts/<slug>.md + PDF
 ```
 
@@ -74,7 +76,8 @@ draft that already fits.
 | `raw-score` | Blind re-score; catches drift from "unchanged" claims |
 | `skim-readability` | Per-bullet scannability checks |
 | `reorder` | Rank bullets within each section by JD relevance/impact |
+| `bold` | Bold top metric/JD keyword per bullet within a density ceiling |
 | `page-fit-check` | Real rendered page count, not a character estimate |
-| `pass-criteria` | The six-gate stop test |
+| `pass-criteria` | The seven-gate stop test |
 | `propagate-edit` | Apply one change across experience.md -> all draft stages |
 | `finalize` | Clean copy to `4-final-drafts/` + PDF |

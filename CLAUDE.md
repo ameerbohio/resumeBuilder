@@ -273,9 +273,10 @@ section at the top, and the current-best draft below it.
      - `Risk check:` one line. "No new risk" is a valid, expected answer
        most passes — only expand past one line if this pass actually
        introduced or changed a Stage 2 "Why This Could Be Rejected" risk.
-4. Repeat until the six-gate stop test passes (score floor, page fit,
+4. Repeat until the seven-gate stop test passes (score floor, page fit,
    accuracy clean, readability clean, diminishing returns confirmed,
-   ordering current — see the `pass-criteria` skill). A plateaued score
+   ordering current, bold-emphasis density current — see the
+   `pass-criteria` skill). A plateaued score
    is **not** by itself a reason to stop: it measures rubric coverage,
    not whether a skimming human can read the page.
 
@@ -314,6 +315,7 @@ has already made once.
 | `raw-score` | 3 | Blind re-score; catches drift |
 | `skim-readability` | 3 | Per-bullet scannability checks |
 | `reorder` | 3 | Rank bullets by JD relevance/impact/scope |
+| `bold` | 3 | Bold top metric/JD keyword per bullet within a density ceiling |
 | `page-fit-check` | 3 | Real rendered page count via headless Chrome |
 | `pass-criteria` | 3 | The six-gate stop test |
 | `propagate-edit` | any | One change across `experience.md` -> all stages |
