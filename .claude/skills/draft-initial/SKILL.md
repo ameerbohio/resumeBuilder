@@ -13,7 +13,19 @@ description: Stage 2 of the resume pipeline. Pull all relevant experience into a
    problem, and material cut here is expensive to rediscover later.
 2. Organize into standard ATS-safe sections (Experience, Projects,
    Education, Technical Skills; reverse chronological; no tables,
-   columns, images, or icons).
+   columns, images, or icons). **Write it in the renderer's expected
+   shape from the start**, so Stage 3 doesn't burn its first iteration on
+   a throwaway "normalize markdown for the renderer" pass:
+   - Name line with no leading `#`.
+   - Two-line entries: `**Company**, Location` then `*Role, Department*,
+     Date` — never a separate `### Company` header, and never the two
+     folded onto one line.
+   - A standalone certification with no separate institution line is its
+     own one-line entry: `*Certification Name*, Date`.
+   - Skills as `- **Category:** items` bullets, not bare bold
+     paragraphs.
+   - See `page-fit-check`'s Calibration section for the full expected
+     shape and why deviations render oddly instead of failing loudly.
 3. Save as `2-initial-drafts/<slug>.md`.
 4. Re-run the rubric against **this draft** and put the score at the top
    as an HTML comment:

@@ -8,20 +8,35 @@ Prints a summary line ending in "PAGES=<n>" so callers can gate on page count
 without parsing the PDF themselves. Exit code is 0 even for multi-page output --
 page count is data, not an error.
 
-Expected markdown shape (what the pipeline's 4-final-drafts files look like):
+Expected markdown shape, calibrated against a candidate's own original resume
+(`4-final-drafts/!!!!RESUME (1).pdf` -- supersedes the earlier Ameer_Bohio
+reference, which was a different person's tech-resume placeholder used only
+because it was the first file available when this renderer was built):
 
     Name
-    Tagline line
-    contact • line • with [links](url)
+    contact line (not italic)
+    link line
+
+    ## Role Title
+    (first section header only: centered, larger, no rule -- a title, not a
+    section divider)
+    Keyword ● Keyword ● Keyword ● Keyword
+    (a line with 2+ "●" separators renders centered+bold, like a tagline)
+    Summary paragraph, left-aligned normal body text.
 
     ## Experience
-    **Role, Company**, Sept 2024 - Current
-    - bullet
-    ## Projects
-    **Project: Tagline**, Tech, Stack, List
+    (every "## " after the first: centered, letter-spaced, ruled underneath)
+    **Company**, Location
+    *Role, Department*, Date
+    (two-line entry: bold company/location row, then italic role/date row --
+    NOT the single-line "**Role, Company**, Date" some earlier drafts used)
     - bullet
     ## Education
-    **School**, Degree, June 2022
+    **School**
+    *Degree*, June 2022
+    *Certification Name*, 2024
+    (a standalone italic line with a date is its own single-row entry, for
+    certifications with no separate institution line)
     ## Technical Skills
     - **Category:** items
 """
@@ -74,37 +89,35 @@ def split_header(line):
     return m.group(1).strip(), m.group(2).strip()
 
 
+def split_italic_header(line):
+    """'*Italic part*, trailing text' -> ('Italic part', 'trailing text')."""
+    m = re.match(r"^\*(.+?)\*\s*,?\s*(.*)$", line.strip())
+    if not m:
+        return line.strip().strip("*"), ""
+    return m.group(1).strip(), m.group(2).strip()
+
+
+def entry_row(left_html, trailing, extra_class=""):
+    date = f'<span class="date">{inline(trailing)}</span>' if trailing else ""
+    cls = f"entry {extra_class}".strip()
+    return f'<div class="{cls}"><span class="left">{left_html}</span>{date}</div>'
+
+
 def entry_html(line, section):
+    """Fallback single-line entry: no matching two-line role/date row
+    followed it. Covers a Projects line ('**Name: Tagline**, tech, stack')
+    and, for backward compatibility, the older single-line
+    '**Role, Company**, Date' shape some earlier drafts used."""
     bold, trailing = split_header(line)
 
-    if section == "education":
-        # '**School**, Degree, Expected 2028' -> school | degree | date(right)
-        degree, date = trailing, ""
-        if "," in trailing:
-            head, tail = trailing.rsplit(",", 1)
-            if DATE_RE.search(tail):
-                degree, date = head.strip(), tail.strip()
-        left = f"<b>{inline(bold)}</b>"
-        if degree:
-            left += f", {inline(degree)}"
-        return (
-            f'<div class="entry"><span class="left">{left}</span>'
-            f'<span class="date">{inline(date)}</span></div>'
-        )
-
     if trailing and DATE_RE.search(trailing) and len(trailing) < 40:
-        # Job entry: '**Role, Company**, Date'
         if "," in bold:
             role, company = bold.split(",", 1)
             left = f"<b>{inline(role.strip())}</b>, <i>{inline(company.strip())}</i>"
         else:
             left = f"<b>{inline(bold)}</b>"
-        return (
-            f'<div class="entry"><span class="left">{left}</span>'
-            f'<span class="date">{inline(trailing)}</span></div>'
-        )
+        return entry_row(left, trailing)
 
-    # Project entry: '**Name: Tagline**, tech, stack' -> name - tagline (tech)
     if ":" in bold:
         name, tag = bold.split(":", 1)
         left = f"<b>{inline(name.strip())}</b> - <b>{inline(tag.strip())}</b>"
@@ -116,45 +129,62 @@ def entry_html(line, section):
 
 
 def md_to_html(md):
-    lines = md.replace("\r\n", "\n").split("\n")
+    raw_lines = md.replace("\r\n", "\n").split("\n")
     # Strip any HTML comments (fit-score headers etc.) before parsing.
-    lines = [l for l in lines if not l.strip().startswith("<!--")]
+    lines = [l.strip() for l in raw_lines if l.strip() and not l.strip().startswith("<!--")]
+    n = len(lines)
 
-    body, section, in_list = [], "", False
-    head = [l for l in lines[:6] if l.strip()][:3]
-    consumed = 0
+    body = []
+    i = 0
+
+    # Head: name / contact line / link line -- up to 3 lines, stop at '#'.
+    head = []
+    while i < n and len(head) < 3 and not lines[i].startswith("#"):
+        head.append(lines[i])
+        i += 1
     if head:
         body.append(f'<div class="name">{inline(head[0])}</div>')
-        consumed = 1
-        if len(head) > 1 and not head[1].startswith("#"):
-            body.append(f'<div class="tagline">{inline(head[1])}</div>')
-            consumed = 2
-        if len(head) > 2 and not head[2].startswith("#"):
+        if len(head) > 1:
+            body.append(f'<div class="contact">{inline(head[1])}</div>')
+        if len(head) > 2:
             body.append(f'<div class="contact">{inline(head[2])}</div>')
-            consumed = 3
 
-    seen = 0
-    for raw in lines:
-        line = raw.rstrip()
-        stripped = line.strip()
-        if not stripped:
-            continue
-        if seen < consumed and not stripped.startswith("#"):
-            seen += 1
-            continue
+    section = ""
+    in_list = False
+    first_h2 = True
+    # A continuation line (no blank line, no special prefix -- how every
+    # draft's bullets and summary paragraphs are manually wrapped for
+    # git-diff readability) accumulates as RAW text here and is only run
+    # through inline() once, on flush. Running inline() per-fragment and
+    # then string-splicing the results (an earlier version of this fix)
+    # breaks any **bold**/*italic* span that straddles the wrap point --
+    # the opening ** and closing ** end up in different fragments and
+    # neither half matches on its own, so both render as literal
+    # asterisks. Blank lines are stripped before this loop even runs, so
+    # this pending buffer is the only surviving paragraph-boundary signal.
+    pending_tag = None  # "li" | "p" | None
+    pending_raw = ""
 
-        def close():
-            nonlocal in_list
-            if in_list:
-                body.append("</ul>")
-                in_list = False
+    def close_list():
+        nonlocal in_list
+        if in_list:
+            body.append("</ul>")
+            in_list = False
+
+    def flush():
+        nonlocal pending_tag, pending_raw
+        if pending_tag:
+            body.append(f"<{pending_tag}>{inline(pending_raw)}</{pending_tag}>")
+            pending_tag, pending_raw = None, ""
+
+    while i < n:
+        stripped = lines[i]
 
         if stripped.startswith("## "):
-            close()
+            flush()
+            close_list()
             title = stripped[3:].strip()
             key = title.lower()
-            if body and body[-1].startswith("</div>"):
-                pass
             if section:
                 body.append("</div>")
             section = (
@@ -162,27 +192,87 @@ def md_to_html(md):
                 else "skills" if "skill" in key
                 else "entries"
             )
-            body.append(f"<h2>{inline(title)}</h2>")
+            if first_h2:
+                body.append(f'<h2 class="title">{inline(title)}</h2>')
+                first_h2 = False
+            else:
+                body.append(f"<h2>{inline(title)}</h2>")
             body.append(
                 f'<div class="{"edu" if section == "education" else section}">'
             )
-        elif stripped.startswith("- ") and section == "skills":
-            close()
-            body.append(f"<p>{inline(stripped[2:])}</p>")
-        elif stripped.startswith("- "):
+            i += 1
+            continue
+
+        if stripped.startswith("- ") and section == "skills":
+            flush()
+            close_list()
+            pending_tag, pending_raw = "p", stripped[2:]
+            i += 1
+            continue
+
+        if stripped.startswith("- "):
+            flush()
             if not in_list:
                 body.append("<ul>")
                 in_list = True
-            body.append(f"<li>{inline(stripped[2:])}</li>")
-        elif stripped.startswith("**"):
-            close()
-            body.append(entry_html(stripped, section))
-        else:
-            close()
-            body.append(f"<p>{inline(stripped)}</p>")
+            pending_tag, pending_raw = "li", stripped[2:]
+            i += 1
+            continue
 
-    if in_list:
-        body.append("</ul>")
+        if stripped.startswith("**"):
+            flush()
+            close_list()
+            bold, trailing = split_header(stripped)
+            next_line = lines[i + 1] if i + 1 < n else ""
+            next_is_role_line = next_line.startswith("*") and not next_line.startswith("**")
+            bold_trailing_is_date = bool(trailing) and DATE_RE.search(trailing)
+            if next_is_role_line and not bold_trailing_is_date:
+                # Two-line entry: '**Company**, Location' + '*Role*, Date'
+                role_bold, role_trailing = split_italic_header(next_line)
+                body.append('<div class="entry-block">')
+                body.append(entry_row(f"<b>{inline(bold)}</b>", trailing))
+                body.append(entry_row(f"<i>{inline(role_bold)}</i>", role_trailing, "sub"))
+                body.append("</div>")
+                i += 2
+                continue
+            body.append(entry_html(stripped, section))
+            i += 1
+            continue
+
+        if stripped.startswith("*") and not stripped.startswith("**"):
+            flush()
+            close_list()
+            # Standalone italic entry, e.g. a certification with no
+            # separate institution line: '*Cert Name*, 2024'.
+            italic, trailing = split_italic_header(stripped)
+            if trailing and DATE_RE.search(trailing):
+                body.append(entry_row(f"<i>{inline(italic)}</i>", trailing))
+            else:
+                pending_tag, pending_raw = "p", stripped
+            i += 1
+            continue
+
+        if stripped.count("●") >= 2 or stripped.count("•") >= 2:
+            # A "Keyword ● Keyword ● Keyword" line renders as a centered,
+            # bold tagline rather than a plain paragraph.
+            flush()
+            close_list()
+            body.append(f'<p class="keywords">{inline(stripped)}</p>')
+            i += 1
+            continue
+
+        # Catch-all: a continuation line with no special prefix. Append
+        # its raw text into whatever block is still pending rather than
+        # closing it.
+        if pending_tag:
+            pending_raw += " " + stripped
+        else:
+            close_list()
+            pending_tag, pending_raw = "p", stripped
+        i += 1
+
+    flush()
+    close_list()
     if section:
         body.append("</div>")
 

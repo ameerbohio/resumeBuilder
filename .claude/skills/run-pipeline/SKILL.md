@@ -48,7 +48,13 @@ draft that already fits.
 
 1. **Never cross a STOP without an explicit user go-ahead** (`CLAUDE.md` hard
    rule 3). Report the result plainly and wait. This applies even when the next
-   step is obvious.
+   step is obvious. **This governs stage-to-stage transitions only** — once a
+   stage is approved, don't re-confirm each sub-decision inside its own loop
+   (each compactor pass, each bold/reorder choice, each restored bullet).
+   Apply the change and let the append-only Compaction Log carry the record;
+   the user reviews and corrects from there, not before each edit. ("why do
+   you ask approval for these things... i should raise concerns when i read
+   logs, id rather progress not be stopped" — direct user feedback.)
 2. **`pass-criteria` decides when the loop ends, not the score alone.** A
    plateaued score is not "done" — see that skill for the six gates.
 3. **Any factual/wording change goes through `propagate-edit`**, never a direct

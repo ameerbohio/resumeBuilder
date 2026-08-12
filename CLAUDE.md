@@ -27,7 +27,10 @@ Folders are numbered in pipeline order:
   <slug>.md                  Stage 2 output: all relevant experience, uncompacted,
                               with a fit score noted at the top and a
                               "## Why This Could Be Rejected" holistic risk
-                              read at the bottom.
+                              read at the bottom. Frozen once the user
+                              confirms it — Stage 3 work (including any
+                              markdown/formatting fixes) happens in
+                              3-compact-drafts instead, never here.
 3-compact-drafts/
   <slug>.md                  Stage 3 working file: a "## Compaction Log" section
                               (one entry per pass, with a character count,
@@ -316,19 +319,39 @@ has already made once.
 | `skim-readability` | 3 | Per-bullet scannability checks |
 | `reorder` | 3 | Rank bullets by JD relevance/impact/scope |
 | `bold` | 3 | Bold top metric/JD keyword per bullet within a density ceiling |
-| `page-fit-check` | 3 | Real rendered page count via headless Chrome |
+| `page-fit-check` | 3 | Real rendered page count via headless Chrome; sends the PDF to the user as a preview |
 | `pass-criteria` | 3 | The six-gate stop test |
 | `propagate-edit` | any | One change across `experience.md` -> all stages |
 | `finalize` | 3 | Clean copy to `4-final-drafts/` + PDF |
 
 PDF rendering: `.claude/skills/render/render_resume.py` (+ `resume.css`,
-calibrated against `4-final-drafts/Ameer_Bohio_Resume_Gitlab.pdf`).
+calibrated against `4-final-drafts/!!!!RESUME (1).pdf`, the candidate's
+own original resume — two-line `**Company**, Location` /
+`*Role, Department*, Date` entries, centered letter-spaced section
+headers, round bullets. An earlier version of this calibration used
+`Ameer_Bohio_Resume_Gitlab.pdf`, a different person's tech resume kept
+only because it was the sole reference file on hand when the renderer
+was first built; that mismatch produced visibly wrong entry formatting
+and bullet spacing until caught by user feedback. See `page-fit-check`'s
+Calibration section for the current expected markdown shape before
+trusting a page count on a draft shaped differently from the reference.
+
+Every `page-fit-check` run in Stage 3 sends the rendered PDF to the user
+as a preview, not just an internal render read by Claude — the user
+should be able to see compaction progress directly, not take it on
+faith from a text description.
 
 ## Tone/format for resume content
 
 - Bullets start with a strong action verb, past tense for past roles.
 - Prefer one line per bullet; avoid nested sub-bullets.
-- No first-person pronouns, no objective statements, no photos/graphics.
+- No first-person pronouns, no photos/graphics.
+- A generic objective statement ("seeking a role where I can...") is
+  weak and gets skimmed past — but an achievement-focused, quantified,
+  role-targeted **summary** is worth the space, per
+  `research-notes/professional-summary-effectiveness.md`. Include one
+  when there's a real proof point to anchor it; skip or keep to one line
+  otherwise.
 - Keep to one page of content unless the seniority/experience genuinely
   requires two — note in the `## Compaction Log` if two pages was a
   deliberate call rather than a failure to compact.

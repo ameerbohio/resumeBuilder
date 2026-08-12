@@ -26,3 +26,4 @@ permanent ruling.
 - [metric-quantification-density.md](metric-quantification-density.md) — how many bullets per role should carry a hard number, metric categories to mine
 - [bullet-order-priority.md](bullet-order-priority.md) — how to rank/order bullets within a section by JD relevance, quantified impact, and scope appropriateness
 - [resume-bold-emphasis.md](resume-bold-emphasis.md) — what to bold (metrics first, then JD keywords), density ceiling (~10-15%), why ATS parsing is irrelevant to the decision
+- [professional-summary-effectiveness.md](professional-summary-effectiveness.md) — when a summary is worth the space (achievement-focused with a real proof point) vs. when to skip it (generic, no anchor)

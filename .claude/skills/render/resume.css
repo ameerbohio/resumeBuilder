@@ -1,7 +1,11 @@
-/* Print layout calibrated against 4-final-drafts/Ameer_Bohio_Resume_Gitlab.pdf
-   (the reference one-page render produced in Google Docs). Do not restyle
-   casually: page-fit-check's page count is only meaningful while this
-   stylesheet matches the reference. */
+/* Print layout calibrated against the candidate's own original resume
+   (4-final-drafts/!!!!RESUME (1).pdf). This supersedes the earlier
+   Ameer_Bohio_Resume_Gitlab.pdf reference, which was a different person's
+   tech-resume placeholder used only because it was the first file on hand
+   when this renderer was built. Do not restyle casually: page-fit-check's
+   page count is only meaningful while this stylesheet matches the current
+   reference -- re-render the reference and confirm comparable layout
+   before trusting any new page-fit result after a CSS change. */
 
 @page {
   size: Letter;
@@ -18,36 +22,57 @@ body {
   margin: 0;
 }
 
+/* Browser UA stylesheets default <p> to ~1em top+bottom margin; reset so a
+   bare paragraph (a summary, a standalone entry fallback) doesn't silently
+   eat ~20pt of unintended vertical space. */
+p { margin: 0 0 3pt; }
+
 /* ---- header block ---- */
 .name {
-  font-size: 19pt;
+  font-size: 20pt;
   font-weight: bold;
   text-align: center;
-  margin: 0 0 1pt;
+  color: #1f4e79;
+  margin: 0 0 2pt;
   letter-spacing: 0.2pt;
-}
-.tagline {
-  font-size: 11.5pt;
-  font-style: italic;
-  text-align: center;
-  margin: 0 0 1pt;
 }
 .contact {
   font-size: 10pt;
   text-align: center;
-  margin: 0 0 7pt;
+  margin: 0 0 2pt;
 }
+.contact:last-of-type { margin-bottom: 7pt; }
 .contact a { color: #1155cc; text-decoration: underline; }
+
+/* ---- role title (first "## " header only) ---- */
+h2.title {
+  font-size: 15pt;
+  font-weight: bold;
+  text-align: center;
+  border-bottom: none;
+  text-transform: uppercase;
+  letter-spacing: 0.5pt;
+  margin: 4pt 0 3pt;
+}
+
+/* A "Keyword ● Keyword ● Keyword" line under the title renders as a
+   centered, bold tagline instead of a plain paragraph. */
+p.keywords {
+  text-align: center;
+  font-weight: bold;
+  margin: 0 0 5pt;
+}
 
 /* ---- section headers ---- */
 h2 {
   font-size: 11pt;
   font-weight: bold;
+  text-align: center;
   text-transform: uppercase;
-  border-bottom: 1.2pt solid #2a4b8d;
+  border-bottom: 1pt solid #000;
   padding-bottom: 1.5pt;
   margin: 7pt 0 4pt;
-  letter-spacing: 0.3pt;
+  letter-spacing: 1.5pt;
 }
 
 /* ---- role / project / degree header lines ---- */
@@ -55,38 +80,45 @@ h2 {
   display: flex;
   justify-content: space-between;
   align-items: baseline;
-  margin: 4pt 0 1pt;
+  margin: 0;
   gap: 12pt;
 }
 .entry .left { flex: 1; }
-.entry .date { font-style: italic; white-space: nowrap; }
+.entry .date { white-space: nowrap; }
 .entry b { font-weight: bold; }
 .entry i { font-style: italic; }
 
+/* Two-line entry: bold company/location row, then italic role/date row. */
+.entry-block { margin: 4pt 0 1pt; }
+.entry-block .entry.sub { margin-top: 0.5pt; }
+.entry-block .entry.sub .date { font-style: italic; }
+
 /* Education rows sit tighter than job entries */
-.edu .entry { margin: 1.5pt 0; }
+.edu .entry-block { margin: 1.5pt 0; }
+.edu .entry { margin: 0; }
 
 /* ---- bullets ---- */
 ul {
   margin: 0;
-  padding-left: 13pt;
+  padding-left: 14pt;
   list-style: none;
 }
 li {
   position: relative;
-  margin: 0 0 1.2pt;
-  padding-left: 8pt;
+  margin: 0 0 2pt;
+  padding-left: 9pt;
   text-align: left;
 }
 li::before {
-  content: "•";
+  content: "\25CF"; /* ● matches the reference's filled round bullet */
   position: absolute;
-  left: -2pt;
+  left: -3pt;
   top: 0;
+  font-size: 6.5pt;
 }
 
 /* ---- skills ---- */
 .skills p { margin: 0 0 1.2pt; }
-.skills b { font-weight: bold; }
+.skills b { font-weight: bold; font-style: italic; }
 
 a { color: #1155cc; }
