@@ -21,6 +21,44 @@ If more than one draft stage exists for that slug
 (`2-initial-drafts/`, `3-compact-drafts/`, `4-final-drafts/`), ask
 which one to score. If only one exists, use it without asking.
 
+## This runs in a subagent, not inline
+
+"Blind" only holds if the scorer genuinely cannot see prior turns. A
+score computed inline in the main conversation — even one that says
+"ignoring prior context" — still shares a context window with every
+score claim, Compaction Log entry, and prior verdict already said out
+loud this session, and language models anchor on numbers they've
+already produced. The fix is structural, not instructional: **the
+agent invoking this skill must spawn a fresh `Agent` tool call
+(`subagent_type: general-purpose`, `run_in_background: false` — the
+result gates the next pipeline step, so this is not a fire-and-forget
+call) rather than running steps 1-6 below itself.** The subagent
+starts cold, so it cannot anchor on anything said earlier in this
+conversation even if it wanted to.
+
+Build the subagent prompt from scratch each time — it has no memory of
+this skill file, the rubric, or the pipeline. Include, inline in the
+prompt:
+
+1. The two file paths to read (job description, target draft — and for
+   a `3-compact-drafts/<slug>.md` target, the explicit instruction to
+   read only the content *below* the `## Compaction Log`).
+2. The full rubric text from `CLAUDE.md` (components, per-item credit
+   weights, the Required/Highly-Valued/Strong-Plus split) — copy it in,
+   don't tell the subagent to go read `CLAUDE.md` itself, since that
+   file also carries this application's own prior Fit Rating and
+   Compaction Log numbers that would defeat the blindness this exists
+   for.
+3. Steps 3-5 below verbatim (scoring literally, the bonus-signal
+   research, where to save it).
+4. The exact output format from this file.
+5. An instruction to return the report as its final message and change
+   nothing else — no file edits beyond the optional `research.md`
+   append in step 5.
+
+Report the subagent's output back to the user/orchestrator exactly as
+returned; do not re-summarize or round it.
+
 ## Procedure
 
 1. **Read the job description fresh.**
@@ -116,3 +154,15 @@ Tally: N clear, N partial, N weak-implicit, N gap (N items)
   makes it good for catching drift, not for drafting.
 - Re-run this any time a compaction pass has claimed "score unchanged"
   several iterations in a row without a fresh literal check.
+- This is one of three gating evaluations (with `ats-score` and
+  `hr-simulation`) that `pass-criteria` requires to all clear their
+  thresholds before a draft is allowed to finalize. It runs on every
+  compactor pass (cheap, catches drift immediately); the other two run
+  only at `pass-criteria` checkpoints — see that skill.
+- The Seniority & scope component is the most common source of a
+  world-assumption finding — a verdict like "reads senior for this
+  scope" is only checkable against what the company itself actually
+  calls senior, which this skill's blind subagent has no way to know.
+  If that component is what's costing points, don't treat the number
+  as final without a `sanity-check` pass on it — see that skill and
+  `pass-criteria`'s "Sanity-checking assumption-based findings" section.

@@ -26,13 +26,27 @@ A draft that fits the page exactly, with content the user wants, is
 **done**. Squeezing it further just creates space that gets refilled.
 
 Everything happens in `3-compact-drafts/<slug>.md`: `## Compaction Log`
-at the top (append-only), current-best draft below it. First pass copies
-`2-initial-drafts/<slug>.md` in as the starting point.
+at the top (append-only), then a `<!-- draft-below -->` sentinel line,
+then the current-best draft. First pass copies `2-initial-drafts/<slug>.md`
+in as the starting point and adds the sentinel immediately before it if
+it isn't already there.
+
+**The `<!-- draft-below -->` sentinel is a fixed structural marker, not
+log content — it never moves, never duplicates, and is the one thing in
+this file that is neither log nor draft.** `finalize`'s extraction and
+the `check-finalize-gate.ps1` hook both split the file on this exact
+string, so every pass that replaces the draft below it must leave
+exactly one sentinel line, immediately before the draft body, with
+nothing but the sentinel on its own line. Losing or duplicating it
+doesn't just break formatting — it breaks the hook that gates
+finalizing, which will report the file unreadable rather than silently
+guessing.
 
 ## Procedure
 
-1. **Read the draft below the log.** Never read *into* the log for
-   evidence — prior "score unchanged" claims are assertions, not proof.
+1. **Read the draft below the log** (i.e. below the `<!-- draft-below -->`
+   sentinel). Never read *into* the log for evidence — prior "score
+   unchanged" claims are assertions, not proof.
 2. **Pick one lever and apply it.** Mixing several in one pass makes a
    score drop impossible to attribute:
    - *Relevance cut* — drop material genuinely low-relevance to this JD.
@@ -86,7 +100,7 @@ entry (`CLAUDE.md` hard rule 6) — brevity trims prose, never the count.
 Get the count with:
 
 ```bash
-awk '/^<first line of resume body>/{f=1} f{print}' 3-compact-drafts/<slug>.md | wc -c
+awk '/<!-- draft-below -->/{f=1;next} f' 3-compact-drafts/<slug>.md | wc -c
 ```
 
 ## Non-decreasing passes are legitimate

@@ -27,17 +27,45 @@ Stage 3   page-fit-check       (first: does it even overflow?)
           loop {
             compactor          (only while it overflows)
             skim-readability   (after any wording change)
-            raw-score          (after any wording change)
+            raw-score          (after any wording change; fresh subagent each time)
             page-fit-check     (after any length change)
-            pass-criteria      (all six gates -> stop or name the next job)
+            pass-criteria      (all nine gates -> stop or name the next job;
+                                 this is where ats-score and hr-simulation run
+                                 — checkpoint cadence, not every compactor pass;
+                                 sanity-check runs inline, only if a gate 1-3
+                                 finding trips its trigger taxonomy)
           }
           add material back    (if cutting overshot, fill the page exactly)
           reorder              (once the bullet set is stable)
           bold                 (once wording/order are settled — last content pass)
           page-fit-check       (bold markup adds chars — re-verify before trusting fit)
-          pass-criteria        (final confirmation, all seven gates)
+          pass-criteria        (final confirmation, all nine gates)
 Stage 3.5 finalize            -> 4-final-drafts/<slug>.md + PDF
 ```
+
+**Stage 3.5 is hook-enforced, not just instruction-enforced.** A
+`PreToolUse` hook (`.claude/hooks/check-finalize-gate.ps1`) hard-blocks
+any write to `4-final-drafts/<slug>.md` unless `pass-criteria` has
+persisted a PASS (via `record-pass-criteria-state.ps1`, its own last
+step) whose hash matches the current `3-compact-drafts/<slug>.md` draft
+body. There's no conversational override for this — if the user wants
+to finalize with gates open, that has to happen by getting
+`pass-criteria` to actually PASS, not by asking `finalize` to skip its
+precondition.
+
+**All three gating evals (`raw-score`, `ats-score`, `hr-simulation`)
+must independently clear their threshold at the `pass-criteria`
+checkpoint that ends the loop — a plateaued or high score on one does
+not offset a fail on another.** `raw-score` runs every compactor pass
+because wording drift is cheap to catch early; `ats-score` and
+`hr-simulation` check the document shape and the human read
+respectively, which don't drift on every wording tweak, so they only
+run when `pass-criteria` is deciding whether to stop the loop — not on
+every iteration inside it. **`sanity-check` runs conditionally, on top
+of that** — only when one of the three evals produces a finding that
+rests on a world-assumption (a seniority bar, a company convention)
+rather than something literally checkable in the JD/draft text; most
+checkpoints trigger nothing and it's skipped entirely.
 
 **The Stage 3 loop targets page fit, not minimum length.** It ends when
 the page is exactly full of content the user wants — reached either by
@@ -56,7 +84,9 @@ draft that already fits.
    you ask approval for these things... i should raise concerns when i read
    logs, id rather progress not be stopped" — direct user feedback.)
 2. **`pass-criteria` decides when the loop ends, not the score alone.** A
-   plateaued score is not "done" — see that skill for the six gates.
+   plateaued score is not "done" — see that skill for the nine gates, and
+   in particular that all three gating evals (score, ATS parseability, HR
+   read) must independently pass, not just the rubric score.
 3. **Any factual/wording change goes through `propagate-edit`**, never a direct
    edit of one stage's file, so `0-experience/experience.md` stays the source of
    truth and every downstream copy stays in sync.
@@ -79,11 +109,14 @@ draft that already fits.
 | `accuracy-checkpoint` | Confirm every claim is literally true, before compaction |
 | `metrics-interview` | Source real numbers for unquantified bullets |
 | `compactor` | One tighten/cut/merge pass with re-score and log entry |
-| `raw-score` | Blind re-score; catches drift from "unchanged" claims |
+| `raw-score` | Blind re-score (fresh subagent); catches drift from "unchanged" claims |
+| `ats-score` | ATS-parseability eval (fresh subagent); gates finalize with raw-score/hr-simulation |
+| `hr-simulation` | Role-played recruiter screen (fresh, context-blind subagent); gates finalize |
+| `sanity-check` | Grounds a world-assumption finding (seniority bar, company convention) against real research; conditional, only when triggered |
 | `skim-readability` | Per-bullet scannability checks |
 | `reorder` | Rank bullets within each section by JD relevance/impact |
 | `bold` | Bold top metric/JD keyword per bullet within a density ceiling |
 | `page-fit-check` | Real rendered page count, not a character estimate |
-| `pass-criteria` | The seven-gate stop test |
+| `pass-criteria` | The nine-gate stop test |
 | `propagate-edit` | Apply one change across experience.md -> all draft stages |
 | `finalize` | Clean copy to `4-final-drafts/` + PDF |

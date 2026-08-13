@@ -1,0 +1,17 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash|Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell -NoProfile -ExecutionPolicy Bypass -File \".claude/hooks/check-finalize-gate.ps1\"",
+            "timeout": 15,
+            "statusMessage": "Checking finalize gate..."
+          }
+        ]
+      }
+    ]
+  }
+}

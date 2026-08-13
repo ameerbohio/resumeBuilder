@@ -276,12 +276,24 @@ section at the top, and the current-best draft below it.
      - `Risk check:` one line. "No new risk" is a valid, expected answer
        most passes — only expand past one line if this pass actually
        introduced or changed a Stage 2 "Why This Could Be Rejected" risk.
-4. Repeat until the seven-gate stop test passes (score floor, page fit,
-   accuracy clean, readability clean, diminishing returns confirmed,
-   ordering current, bold-emphasis density current — see the
-   `pass-criteria` skill). A plateaued score
-   is **not** by itself a reason to stop: it measures rubric coverage,
-   not whether a skimming human can read the page.
+4. Repeat until the nine-gate stop test passes (raw-score floor,
+   ATS-parseability score, HR-simulation verdict, page fit, accuracy
+   clean, readability clean, diminishing returns confirmed, ordering
+   current, bold-emphasis density current — see the `pass-criteria`
+   skill). The first three gates are three independent, differently-blind
+   evaluations — each runs as its own fresh subagent with no memory of
+   this conversation, and **all three must clear their own threshold**;
+   a strong result on one never offsets a fail on another. A plateaued
+   score is **not** by itself a reason to stop: it measures rubric
+   coverage, not whether the document parses cleanly or reads well to a
+   human. Some findings from these three evals aren't checkable from
+   the JD/draft text at all — a "reads senior" or "this company
+   usually wants X" verdict is really an assumption about the outside
+   world. Before treating a finding like that as final, run
+   `sanity-check` (grounds it against sibling postings, the company's
+   own handbook, or existing job research, then confirms/revises/
+   overturns it with cited evidence) rather than accepting or arguing
+   with the blind eval's guess either way.
 
    **Compaction targets page fit, not minimum length.** Cut while the
    draft overflows; once it fits, stop. If cutting overshoots and leaves
@@ -315,12 +327,15 @@ has already made once.
 | `accuracy-checkpoint` | 2.5 | Confirm every claim is literally true |
 | `metrics-interview` | 2.5 | Source real numbers for unquantified bullets |
 | `compactor` | 3 | One tighten/cut/merge pass, re-score, log |
-| `raw-score` | 3 | Blind re-score; catches drift |
+| `raw-score` | 3 | Blind re-score, run as a fresh subagent; catches drift |
+| `ats-score` | 3 | Standardized ATS-parseability eval, fresh subagent; gates finalize |
+| `hr-simulation` | 3 | Role-played recruiter screen, fresh context-blind subagent; gates finalize |
+| `sanity-check` | 3 | Grounds a world-assumption finding (seniority bar, company convention) from another eval against real research; conditional, only when triggered |
 | `skim-readability` | 3 | Per-bullet scannability checks |
 | `reorder` | 3 | Rank bullets by JD relevance/impact/scope |
 | `bold` | 3 | Bold top metric/JD keyword per bullet within a density ceiling |
 | `page-fit-check` | 3 | Real rendered page count via headless Chrome; sends the PDF to the user as a preview |
-| `pass-criteria` | 3 | The six-gate stop test |
+| `pass-criteria` | 3 | The nine-gate stop test; raw-score/ats-score/hr-simulation must all independently pass |
 | `propagate-edit` | any | One change across `experience.md` -> all stages |
 | `finalize` | 3 | Clean copy to `4-final-drafts/` + PDF |
 

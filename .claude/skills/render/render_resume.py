@@ -110,6 +110,20 @@ def entry_html(line, section):
     '**Role, Company**, Date' shape some earlier drafts used."""
     bold, trailing = split_header(line)
 
+    # Education: '**School**, Degree, Date' -- always split degree from date
+    # on the LAST comma (a degree name can itself contain commas) and put
+    # the degree on the left, date right-aligned. Without this, the generic
+    # heuristic below only right-aligns the date when the whole "Degree,
+    # Date" trailing text happens to be under 40 chars and produces a
+    # completely different (parenthetical, left-side) layout when it's
+    # longer -- two education entries of different degree-name length would
+    # render inconsistently with each other, which is exactly what happened.
+    if section == "education" and trailing and "," in trailing:
+        degree, date = (p.strip() for p in trailing.rsplit(",", 1))
+        if DATE_RE.search(date):
+            left = f"<b>{inline(bold)}</b>, {inline(degree)}"
+            return entry_row(left, date)
+
     if trailing and DATE_RE.search(trailing) and len(trailing) < 40:
         if "," in bold:
             role, company = bold.split(",", 1)
@@ -128,7 +142,7 @@ def entry_html(line, section):
     return f'<div class="entry"><span class="left">{left}</span></div>'
 
 
-def md_to_html(md):
+def md_to_html(md, ats_safe=False):
     raw_lines = md.replace("\r\n", "\n").split("\n")
     # Strip any HTML comments (fit-score headers etc.) before parsing.
     lines = [l.strip() for l in raw_lines if l.strip() and not l.strip().startswith("<!--")]
@@ -192,11 +206,21 @@ def md_to_html(md):
                 else "skills" if "skill" in key
                 else "entries"
             )
-            if first_h2:
+            # The centered/no-rule "role title" treatment is for an actual
+            # tagline under the name (e.g. "## Senior Backend Engineer"),
+            # not for whichever section happens to come first. A resume
+            # that opens straight into "## Experience" (no separate title
+            # line) must render that header exactly like every other
+            # section header -- same left alignment, same rule -- or the
+            # first section visually breaks consistency with the rest.
+            is_named_section = any(
+                k in key for k in ("experience", "project", "education", "skill", "summary")
+            )
+            if first_h2 and not is_named_section:
                 body.append(f'<h2 class="title">{inline(title)}</h2>')
-                first_h2 = False
             else:
                 body.append(f"<h2>{inline(title)}</h2>")
+            first_h2 = False
             body.append(
                 f'<div class="{"edu" if section == "education" else section}">'
             )
@@ -278,9 +302,10 @@ def md_to_html(md):
 
     with open(CSS_PATH, encoding="utf-8") as fh:
         css = fh.read()
+    body_class = ' class="ats-safe"' if ats_safe else ""
     return (
         "<!doctype html><html><head><meta charset='utf-8'>"
-        f"<style>{css}</style></head><body>\n" + "\n".join(body) + "\n</body></html>"
+        f"<style>{css}</style></head><body{body_class}>\n" + "\n".join(body) + "\n</body></html>"
     )
 
 
@@ -295,10 +320,18 @@ def main():
     ap.add_argument("input")
     ap.add_argument("-o", "--output")
     ap.add_argument("--html-only", action="store_true")
+    ap.add_argument(
+        "--ats-safe", action="store_true",
+        help="Swap entry-header/bullet layout to a non-flex, non-positioned "
+             "variant that keeps PDF content-stream text in document order "
+             "for naive/raw ATS parsers. Not the default -- the flex layout "
+             "is the calibrated visual standard; use this only when "
+             "parseability needs to win over exact visual match.",
+    )
     args = ap.parse_args()
 
     with open(args.input, encoding="utf-8") as fh:
-        html_doc = md_to_html(fh.read())
+        html_doc = md_to_html(fh.read(), ats_safe=args.ats_safe)
 
     base = os.path.splitext(os.path.abspath(args.input))[0]
     html_path = base + ".render.html"

@@ -27,3 +27,5 @@ permanent ruling.
 - [bullet-order-priority.md](bullet-order-priority.md) — how to rank/order bullets within a section by JD relevance, quantified impact, and scope appropriateness
 - [resume-bold-emphasis.md](resume-bold-emphasis.md) — what to bold (metrics first, then JD keywords), density ceiling (~10-15%), why ATS parsing is irrelevant to the decision
 - [professional-summary-effectiveness.md](professional-summary-effectiveness.md) — when a summary is worth the space (achievement-focused with a real proof point) vs. when to skip it (generic, no anchor)
+- [overqualification-skill-gap-reconciliation.md](overqualification-skill-gap-reconciliation.md) — why overqualified-in-scope doesn't offset missing-a-specific-tool (different rubric axes, can compound instead), what does compensate for a tool gap (transferable/adjacent depth)
+- [contractor-staffing-agency-attribution.md](contractor-staffing-agency-attribution.md) — list the actual employer of record (background-check accuracy), not just the client site; agency-first vs client-first-with-contractor-tag patterns
