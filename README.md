@@ -162,20 +162,24 @@ Summary paragraph, left-aligned.
 - **Category:** items
 ```
 
-**Section order and entry conventions** — which sections exist, what
-order they're in, e.g. Jake's Resume's Education-first layout vs. this
-repo's own default — are chosen via the `templates/` folder (see
+**Entry layout, header style, and bullet style** — not section order —
+are chosen via the `templates/` folder (see
 [templates/README.md](templates/README.md)). Tell Claude which file to
 follow when starting the Initial Draft stage, or leave it unspecified
-and `templates/jakes-resume.md` is used by default. This is separate
-from the visual restyling below — a template controls structure and
-wording conventions, never fonts, spacing, or which content makes the
-page; content is still pulled solely from `experience.md` either way.
+and `templates/jakes_resume_format.pdf` ("Jake's Resume," a widely
+recommended ATS-safe format) is used by default. Section order stays a
+per-application judgment call — Education-first for a student,
+Experience-first for someone with relevant work history — a template
+never fixes that in place, and content is still pulled solely from
+`experience.md` either way.
 
-That specific visual style (fonts, spacing, letter-spacing on headers,
-round bullets) is calibrated against one reference PDF — the candidate's
-own original resume — not a requirement of the pipeline itself. If you'd
-rather use a different visual template:
+The pipeline's built-in PDF renderer (`resume.css`) aims to visually
+match that same default template, but as of this writing it hasn't been
+fully re-verified against it — see the calibration note in
+`.claude/skills/page-fit-check/SKILL.md` for exactly what's confirmed
+(page count) versus still open (exact visual match: font, header
+casing, indentation). If you'd rather use a different visual style than
+whatever the renderer currently produces:
 
 - **Easiest:** write/compact through the pipeline as normal, then paste
   the finished `4-final-drafts/<slug>.md` content into your own template

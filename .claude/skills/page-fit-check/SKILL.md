@@ -65,19 +65,33 @@ length is the unit the user actually decides in.
 
 ## Calibration
 
-`.claude/skills/render/resume.css` is tuned to match
-`4-final-drafts/!!!!RESUME (1).pdf`, the candidate's own original resume
-(Times, ~10.5pt body, 0.5in x 0.6in margins, Letter). An earlier version
-of this file was calibrated against `Ameer_Bohio_Resume_Gitlab.pdf`
-instead — a different person's tech resume, used only because it was the
-one reference file on hand when the renderer was first built. That
-mismatch is why an early session produced bullets whose wrapped lines
-and entry headers didn't match what the user actually wanted; if you're
-looking at a draft that still cites the Ameer file, its formatting is
-stale and should be re-run through the current renderer. Changing
+`.claude/skills/render/resume.css` currently renders: Times-family serif,
+~10.5pt body, 0.5in x 0.6in margins, Letter; name centered/bold/large;
+section headers **left-aligned, uppercase, letter-spaced, ruled
+underneath** (not centered — that changed in the pass that moved the
+stylesheet toward a Jake's-Resume-style look); two-line entries; round
+bullets.
+
+The real "Jake's Resume" reference PDF is now on file at
+`templates/jakes_resume_format.pdf`, but `resume.css` has **not yet been
+visually re-verified against it**. A side-by-side read shows real
+differences: the reference uses a LaTeX serif (not Times), small-caps
+section headers (not uppercase), and more indentation on bullets/skills
+lines than the current CSS produces. Until someone runs that
+recalibration pass, treat `page-fit-check`'s page **count** as reliable
+and its visual match to Jake's Resume specifically as an open item — say
+so if a user asks whether the preview "looks like" that template.
+
+This stylesheet has drifted from its stated reference twice before, both
+caught only by user feedback after the fact: first calibrated against
+`Ameer_Bohio_Resume_Gitlab.pdf` (a different person's resume, kept only
+because it was the one reference file on hand when the renderer was
+first built), then against `4-final-drafts/!!!!RESUME (1).pdf` (the
+candidate's own original resume, centered headers, blue name). Changing
 `resume.css` invalidates every prior page-fit judgment — if it must
 change, re-render the reference and confirm comparable layout before
-trusting any new result.
+trusting any new result, and update this section so it doesn't drift a
+third time.
 
 The renderer expects this shape:
 
@@ -86,12 +100,17 @@ Name
 contact line (not italic)
 link line
 
-## Role Title              <- first "## " only: centered, larger, no rule
-Keyword ● Keyword ● Keyword     <- 2+ "●" separators -> centered, bold
-Summary paragraph, left-aligned.
+## Role Title              <- only if the first "## " is NOT a recognized
+Keyword ● Keyword ● Keyword     section name (experience/project/education/
+Summary paragraph, left-aligned.  skill/summary): centered, larger, no rule.
+                                   A resume that opens straight into
+                                   "## Experience" or "## Education" (no
+                                   separate title line) renders that
+                                   header exactly like every other section.
 
-## Experience               <- every "## " after the first: centered,
-                                letter-spaced, ruled underneath
+## Experience               <- every recognized section header: left-
+                                aligned, uppercase, letter-spaced, ruled
+                                underneath
 **Company**, Location
 *Role, Department*, Date    <- two-line entry, NOT one line
 - bullet

@@ -56,10 +56,16 @@ research-notes/
                               instead, never here.
 templates/
   README.md                  Index of available templates and how to pick one.
-  jakes-resume.md             Default template — section order and entry
-                              conventions only, never content. Stage 2
-                              (`draft-initial`) follows whichever template
-                              the user names, or this one if none is named.
+  jakes_resume_format.pdf    Default template ("Jake's Resume") — visual/
+                              format conventions only (entry layout, header
+                              style, bullet style), never section order and
+                              never content. Stage 2 (`draft-initial`)
+                              follows whichever template the user names, or
+                              this one if none is named; section order is
+                              still chosen per-application based on
+                              seniority/what's strongest for the JD. Also
+                              the visual calibration reference for the
+                              renderer — see the PDF rendering note below.
 ```
 
 The same `<slug>` names the folder under `1-job-descriptions/` and the files
@@ -204,10 +210,13 @@ Trigger: user approves the fit rating and says to proceed.
    toward inclusion, not compression. This draft is a comprehensive
    quarry of material, not a final resume. Organize it into standard resume
    sections but do not worry yet about length or tightness — follow the
-   section order and entry conventions of whichever file in `templates/`
-   the user named, or `templates/jakes-resume.md` if none was named. A
-   template supplies shape only (which sections, what order); content
-   still comes solely from `experience.md`, same as always.
+   visual/format conventions (entry layout, header style, bullet style)
+   of whichever file in `templates/` the user named, or
+   `templates/jakes_resume_format.pdf` if none was named. A template
+   supplies format only, never section order (that's a per-application
+   call based on seniority/what's strongest for the JD) and never
+   content — content still comes solely from `experience.md`, same as
+   always.
 2. Save as `2-initial-drafts/<slug>.md`.
 3. Re-run the fit rubric against this draft and include the score at the top
    of the file as `<!-- fit score: X/10 (components: ...) -->` — this score
@@ -349,17 +358,26 @@ has already made once.
 | `propagate-edit` | any | One change across `experience.md` -> all stages |
 | `finalize` | 3 | Clean copy to `4-final-drafts/` + PDF |
 
-PDF rendering: `.claude/skills/render/render_resume.py` (+ `resume.css`,
-calibrated against `4-final-drafts/!!!!RESUME (1).pdf`, the candidate's
-own original resume — two-line `**Company**, Location` /
-`*Role, Department*, Date` entries, centered letter-spaced section
-headers, round bullets. An earlier version of this calibration used
-`Ameer_Bohio_Resume_Gitlab.pdf`, a different person's tech resume kept
-only because it was the sole reference file on hand when the renderer
-was first built; that mismatch produced visibly wrong entry formatting
-and bullet spacing until caught by user feedback. See `page-fit-check`'s
-Calibration section for the current expected markdown shape before
-trusting a page count on a draft shaped differently from the reference.
+PDF rendering: `.claude/skills/render/render_resume.py` (+ `resume.css`) —
+two-line `**Company**, Location` / `*Role, Department*, Date` entries,
+ruled section headers, round bullets. `resume.css`'s own header comment
+targets a "Jake's Resume" look, and the real reference PDF now lives at
+`templates/jakes_resume_format.pdf` (see `templates/README.md`) — but
+that CSS has not yet been visually re-verified against it stroke for
+stroke (font family, small-caps vs. uppercase headers, bullet/skills
+indentation all look different on a side-by-side read as of this note).
+Treat page-fit-check's page **count** as reliable and its visual
+**fidelity** to Jake's Resume specifically as unconfirmed until someone
+does that recalibration pass. Two earlier calibration mismatches already
+happened this way — first against `Ameer_Bohio_Resume_Gitlab.pdf` (a
+different person's resume, kept only because it was the sole reference
+file on hand when the renderer was first built), later against
+`4-final-drafts/!!!!RESUME (1).pdf` (the candidate's own original resume)
+— both produced visibly wrong formatting until caught by user feedback,
+which is why this note calls out the current gap explicitly rather than
+asserting the calibration is done. See `page-fit-check`'s Calibration
+section for the current expected markdown shape before trusting a page
+count on a draft shaped differently from the reference.
 
 Every `page-fit-check` run in Stage 3 sends the rendered PDF to the user
 as a preview, not just an internal render read by Claude — the user

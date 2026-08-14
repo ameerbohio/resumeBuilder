@@ -11,15 +11,19 @@ description: Stage 2 of the resume pipeline. Pull all relevant experience into a
    `0-experience/experience.md`. Err toward inclusion. This draft is a
    quarry of material, not a resume — length and tightness are Stage 3's
    problem, and material cut here is expensive to rediscover later.
-2. Pick a template from `templates/` for section order and entry
-   conventions: whatever the user named, or `templates/jakes-resume.md`
-   by default (see `templates/README.md`). A template only supplies
-   *shape* — which sections exist and what order they're in — never
-   content; every bullet, skill, and metric still comes solely from
-   `experience.md` (hard rules 1 and 2 apply exactly the same either
-   way). Organize the draft into standard ATS-safe sections following
-   that shape (reverse chronological; no tables, columns, images, or
-   icons). **Write it in the renderer's expected shape from the start**,
+2. Pick a template from `templates/` for visual/format conventions —
+   entry layout, header style, bullet style: whatever the user named, or
+   `templates/jakes_resume_format.pdf` by default (see
+   `templates/README.md`). A template supplies *format* only, never
+   section order and never content — decide section order yourself,
+   per-application, based on the candidate's experience level and
+   what's strongest for this JD (e.g. Education-first for a student vs.
+   Experience-first for someone with relevant work history); every
+   bullet, skill, and metric still comes solely from `experience.md`
+   (hard rules 1 and 2 apply exactly the same either way). Organize the
+   draft into standard ATS-safe sections (reverse chronological; no
+   tables, columns, images, or icons). **Write it in the renderer's
+   expected shape from the start**,
    so Stage 3 doesn't burn its first iteration on a throwaway "normalize
    markdown for the renderer" pass:
    - Name line with no leading `#`.
