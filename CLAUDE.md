@@ -54,6 +54,12 @@ research-notes/
                               Company/job-specific research belongs in
                               `1-job-descriptions/<slug>/research.md`
                               instead, never here.
+templates/
+  README.md                  Index of available templates and how to pick one.
+  jakes-resume.md             Default template — section order and entry
+                              conventions only, never content. Stage 2
+                              (`draft-initial`) follows whichever template
+                              the user names, or this one if none is named.
 ```
 
 The same `<slug>` names the folder under `1-job-descriptions/` and the files
@@ -197,7 +203,11 @@ Trigger: user approves the fit rating and says to proceed.
 1. Pull **all** experience relevant to this JD from `experience.md` — err
    toward inclusion, not compression. This draft is a comprehensive
    quarry of material, not a final resume. Organize it into standard resume
-   sections but do not worry yet about length or tightness.
+   sections but do not worry yet about length or tightness — follow the
+   section order and entry conventions of whichever file in `templates/`
+   the user named, or `templates/jakes-resume.md` if none was named. A
+   template supplies shape only (which sections, what order); content
+   still comes solely from `experience.md`, same as always.
 2. Save as `2-initial-drafts/<slug>.md`.
 3. Re-run the fit rubric against this draft and include the score at the top
    of the file as `<!-- fit score: X/10 (components: ...) -->` — this score

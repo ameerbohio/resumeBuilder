@@ -124,6 +124,69 @@ Two things worth calling out in that diagram:
   literally checkable in the JD or draft text — most checkpoints trigger
   nothing.
 
+## Resume format reference
+
+Every draft in this pipeline is plain, ATS-safe markdown — standard
+section headers, reverse-chronological order, no tables/columns/images
+(`CLAUDE.md` hard rule 4). That means the *content* is template-agnostic:
+once you have a final draft, you can drop it into whatever visual
+template you like — Word, Google Docs, Canva, another ATS builder — the
+markdown itself doesn't lock you into one look.
+
+The repo does ship one built-in look, used for the automatic PDF preview
+every `page-fit-check` sends you during Stage 3. Its renderer
+(`.claude/skills/render/render_resume.py` + `resume.css`) expects drafts
+shaped like this:
+
+```
+Name
+contact line (not italic)
+link line
+
+## Role Title              <- first "## " only: centered, larger, no rule
+Keyword ● Keyword ● Keyword     <- 2+ "●" separators -> centered, bold
+Summary paragraph, left-aligned.
+
+## Experience               <- every "## " after the first: centered,
+                                letter-spaced, ruled underneath
+**Company**, Location
+*Role, Department*, Date    <- two-line entry, NOT one line
+- bullet
+
+## Education
+**School**
+*Degree*, Date
+*Certification Name*, Date  <- standalone italic entry, no institution line
+
+## Technical Skills
+- **Category:** items
+```
+
+**Section order and entry conventions** — which sections exist, what
+order they're in, e.g. Jake's Resume's Education-first layout vs. this
+repo's own default — are chosen via the `templates/` folder (see
+[templates/README.md](templates/README.md)). Tell Claude which file to
+follow when starting the Initial Draft stage, or leave it unspecified
+and `templates/jakes-resume.md` is used by default. This is separate
+from the visual restyling below — a template controls structure and
+wording conventions, never fonts, spacing, or which content makes the
+page; content is still pulled solely from `experience.md` either way.
+
+That specific visual style (fonts, spacing, letter-spacing on headers,
+round bullets) is calibrated against one reference PDF — the candidate's
+own original resume — not a requirement of the pipeline itself. If you'd
+rather use a different visual template:
+
+- **Easiest:** write/compact through the pipeline as normal, then paste
+  the finished `4-final-drafts/<slug>.md` content into your own template
+  by hand. Nothing about scoring, compaction, or the gates depends on
+  which renderer (or no renderer) produces the final visual file.
+- **To restyle the built-in renderer itself:** swap the reference PDF and
+  adjust `.claude/skills/render/resume.css` to match. Changing that CSS
+  invalidates every prior `page-fit-check` page-count judgment until you
+  re-render the new reference and confirm the layout — see that skill's
+  Calibration section before touching it mid-application.
+
 ## Things to know
 
 - Claude will **never invent** experience, skills, or metrics — if a job
