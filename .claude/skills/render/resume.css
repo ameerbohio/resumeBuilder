@@ -1,12 +1,38 @@
-/* Print layout calibrated against 4-final-drafts/Jakes_Resume_Template_Example.pdf
-   ("Jake's Resume" template) -- black name, left-aligned section headers with
-   a full-width rule, standard round bullets, non-italic skills labels. This
-   supersedes the earlier calibration against "!!!!RESUME (1).pdf" (centered
-   headers, blue name, custom absolutely-positioned bullet glyph). Do not
-   restyle casually: page-fit-check's page count is only meaningful while
-   this stylesheet matches the current reference -- re-render the reference
-   and confirm comparable layout before trusting any new page-fit result
-   after a CSS change. */
+/* Print layout calibrated against templates/jakes_resume_format.pdf
+   ("Jake's Resume" template, the repo's shipped default -- see
+   templates/README.md) -- black name and links, left-aligned small-caps
+   section headers with a full-width rule, standard round bullets indented
+   to match the reference's itemize depth, non-italic skills labels
+   indented the same amount. This supersedes the earlier calibration
+   against "!!!!RESUME (1).pdf" (centered uppercase headers, blue name,
+   custom absolutely-positioned bullet glyph), which itself superseded an
+   even earlier one against a different person's resume kept only because
+   it was the sole reference file on hand when the renderer was first
+   built (see CLAUDE.md's PDF rendering note for that history -- two
+   mismatches is why this file is not restyled casually).
+
+   NOTE ON FONT: the reference PDF is LaTeX-typeset (Computer Modern /
+   Latin Modern), which no browser has installed by default and this repo
+   does not embed -- exact glyph-for-glyph font matching is not
+   achievable through CSS alone. Times New Roman is kept as the closest
+   widely-available serif; if a closer match is ever wanted, embedding an
+   actual Latin Modern web font is the only real fix, not a font-family
+   swap.
+
+   NOTE ON ENTRY FIELD ORDER: the reference bolds the Role/Title line and
+   italicizes the Company/School line for Experience entries (reversed
+   from Education, where the School is bolded). This stylesheet does NOT
+   encode that swap -- render_resume.py's parser and every skill file in
+   this pipeline fix "**Company**, Location" / "*Role, Department*, Date"
+   as the one markdown convention regardless of which template is active,
+   since changing it would ripple through every stage's expected shape.
+   Matching Jake's Resume here is a visual-styling exercise (fonts,
+   header case, spacing, indentation), not a markdown-authoring one.
+
+   Do not restyle casually: page-fit-check's page count is only
+   meaningful while this stylesheet matches the current reference --
+   re-render the reference and confirm comparable layout before trusting
+   any new page-fit result after a CSS change. */
 
 @page {
   size: Letter;
@@ -43,7 +69,7 @@ p { margin: 0 0 3pt; }
   margin: 0 0 2pt;
 }
 .contact:last-of-type { margin-bottom: 7pt; }
-.contact a { color: #1155cc; text-decoration: underline; }
+.contact a { color: #000; text-decoration: underline; }
 
 /* ---- role title (first "## " header only) ---- */
 h2.title {
@@ -66,14 +92,14 @@ p.keywords {
 
 /* ---- section headers ---- */
 h2 {
-  font-size: 11pt;
+  font-size: 12pt;
   font-weight: bold;
   text-align: left;
-  text-transform: uppercase;
+  font-variant: small-caps;
   border-bottom: 1pt solid #000;
   padding-bottom: 1.5pt;
   margin: 7pt 0 4pt;
-  letter-spacing: 0.3pt;
+  letter-spacing: 0.2pt;
 }
 
 /* ---- role / project / degree header lines ---- */
@@ -127,7 +153,7 @@ body.ats-safe .entry .date { float: right; }
    .entry/ATS note below). */
 ul {
   margin: 0;
-  padding-left: 14pt;
+  padding-left: 20pt;
   list-style: disc;
   list-style-position: outside;
 }
@@ -138,7 +164,7 @@ li {
 }
 
 /* ---- skills ---- */
-.skills p { margin: 0 0 1.2pt; }
+.skills p { margin: 0 0 1.2pt; padding-left: 20pt; }
 .skills b { font-weight: bold; }
 
-a { color: #1155cc; }
+a { color: #000; }

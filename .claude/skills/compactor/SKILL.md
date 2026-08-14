@@ -56,6 +56,14 @@ guessing.
    - *Telegraphic trim* — drop articles/connectives ("a", "the",
      "and"->"/") where it stays readable. Ask first; imperfect grammar
      is a user preference, not a default.
+   - *Layout compaction* — collapse a two-line entry (`**Company**,
+     Location` / `*Role*, Date`) into the renderer's single-line
+     fallback (`**Role**, Company, Date`) to save a full row without
+     cutting any bullet content. Costs the standalone Location and
+     subordinates Company to Role — see
+     `research-notes/entry-layout-compression.md` for when that's worth
+     it. Apply per-entry, not draft-wide, and only where the trade-off
+     actually helps this JD.
 3. **Re-score** with `raw-score` — literally, against the new text, not
    by reasoning about what the edit "should not have" affected.
 4. **Compare to the baseline ceiling** in `2-initial-drafts/<slug>.md`:

@@ -26,10 +26,14 @@ description: Stage 2 of the resume pipeline. Pull all relevant experience into a
    expected shape from the start**,
    so Stage 3 doesn't burn its first iteration on a throwaway "normalize
    markdown for the renderer" pass:
-   - Name line with no leading `#`.
+   - Name line with no leading `#`, then contact info and links on **one**
+     line (`phone | email | LinkedIn | GitHub`) — matches the default
+     template. Only split onto a second line if it genuinely doesn't fit.
    - Two-line entries: `**Company**, Location` then `*Role, Department*,
      Date` — never a separate `### Company` header, and never the two
-     folded onto one line.
+     folded onto one line. (A single-line fallback exists and is a Stage
+     3 compaction lever, not a Stage 2 default — see
+     `research-notes/entry-layout-compression.md`.)
    - A standalone certification with no separate institution line is its
      own one-line entry: `*Certification Name*, Date`.
    - Skills as `- **Category:** items` bullets, not bare bold

@@ -8,28 +8,34 @@ Prints a summary line ending in "PAGES=<n>" so callers can gate on page count
 without parsing the PDF themselves. Exit code is 0 even for multi-page output --
 page count is data, not an error.
 
-Expected markdown shape, calibrated against a candidate's own original resume
-(`4-final-drafts/!!!!RESUME (1).pdf` -- supersedes the earlier Ameer_Bohio
-reference, which was a different person's tech-resume placeholder used only
-because it was the first file available when this renderer was built):
+Expected markdown shape, calibrated against templates/jakes_resume_format.pdf
+("Jake's Resume", this repo's shipped default template -- see
+templates/README.md; supersedes two earlier references, see CLAUDE.md's PDF
+rendering note for that history):
 
     Name
-    contact line (not italic)
-    link line
+    contact + links, one line (phone | email | LinkedIn | GitHub -- matches
+    the default template; a second line is only for genuine overflow)
 
     ## Role Title
-    (first section header only: centered, larger, no rule -- a title, not a
-    section divider)
+    (only if the first "## " is NOT a recognized section name --
+    experience/project/education/skill/summary -- centered, larger, no
+    rule. A resume that opens straight into "## Experience" or
+    "## Education" renders that header exactly like every other section.)
     Keyword ● Keyword ● Keyword ● Keyword
     (a line with 2+ "●" separators renders centered+bold, like a tagline)
     Summary paragraph, left-aligned normal body text.
 
     ## Experience
-    (every "## " after the first: centered, letter-spaced, ruled underneath)
+    (every recognized section header: left-aligned, small-caps,
+    letter-spaced, ruled underneath)
     **Company**, Location
     *Role, Department*, Date
-    (two-line entry: bold company/location row, then italic role/date row --
-    NOT the single-line "**Role, Company**, Date" some earlier drafts used)
+    (two-line entry: bold company/location row, then italic role/date row.
+    A single-line "**Role, Company**, Date" -- no follow-up italic line --
+    is also supported as a space-saving fallback some drafts use; see
+    research-notes/entry-layout-compression.md for when that trade-off is
+    worth it.)
     - bullet
     ## Education
     **School**

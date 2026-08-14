@@ -97,8 +97,9 @@ The renderer expects this shape:
 
 ```
 Name
-contact line (not italic)
-link line
+contact + links, one line     <- phone | email | LinkedIn | GitHub, matches
+                                  the default template (Jake's Resume); a
+                                  second line is only for genuine overflow
 
 ## Role Title              <- only if the first "## " is NOT a recognized
 Keyword ● Keyword ● Keyword     section name (experience/project/education/
@@ -109,7 +110,7 @@ Summary paragraph, left-aligned.  skill/summary): centered, larger, no rule.
                                    header exactly like every other section.
 
 ## Experience               <- every recognized section header: left-
-                                aligned, uppercase, letter-spaced, ruled
+                                aligned, small-caps, letter-spaced, ruled
                                 underneath
 **Company**, Location
 *Role, Department*, Date    <- two-line entry, NOT one line

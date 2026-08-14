@@ -30,7 +30,7 @@ If you don't specify one, `draft-initial` falls back to
 
 | File | Description |
 |---|---|
-| `jakes_resume_format.pdf` | "Jake's Resume" — one of the most widely recommended ATS-safe formats (a standing recommendation on r/EngineeringResumes): two-line company/role entries with right-aligned dates, small-caps ruled section headers, categorized skills line. **Default template**, and also the visual calibration reference for the pipeline's built-in PDF renderer — see `.claude/skills/page-fit-check/SKILL.md`'s Calibration section. |
+| `jakes_resume_format.pdf` | "Jake's Resume" — one of the most widely recommended ATS-safe formats (a standing recommendation on r/EngineeringResumes): single-line contact block, two-line company/role entries with right-aligned dates, small-caps ruled section headers, categorized skills line. **Default template**, and also the visual calibration reference for the pipeline's built-in PDF renderer — see `.claude/skills/page-fit-check/SKILL.md`'s Calibration section. |
 
 ## Adding your own
 
